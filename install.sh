@@ -22,25 +22,33 @@ if [[ -n "${BASH_SOURCE[0]:-}" && -f "${BASH_SOURCE[0]}" ]]; then
 else
   mkdir -p "$(dirname "$dest")"
   if [[ -d "$dest/.git" ]]; then
-    git -C "$dest" pull --ff-only
+    root="$dest"
+  elif [[ -e "$dest" ]]; then
+    echo "já existe e não é uma instalação do helpia: $dest" >&2
+    exit 1
   else
     git clone --depth 1 "$repo_url" "$dest"
+    root="$dest"
   fi
-  root="$dest"
 fi
 
 chmod +x "$root/helpia" "$root/src/main.sh"
 
-if [[ ! -f "$root/.env" ]]; then
-  cp "$root/.env.example" "$root/.env"
-fi
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/helpia"
+mkdir -p "$config_dir"
 
-if [[ ! -s "$root/.provider" ]]; then
-  printf '%s\n' openrouter > "$root/.provider"
+if [[ ! -f "$config_dir/env" ]]; then
+  if [[ -f "$root/.env" ]]; then
+    cp "$root/.env" "$config_dir/env"
+  else
+    cp "$root/.env.example" "$config_dir/env"
+  fi
 fi
-
-if [[ ! -s "$root/.model" ]]; then
-  printf '%s\n' inception/mercury-2.5 > "$root/.model"
+if [[ ! -s "$config_dir/provider" ]]; then
+  printf '%s\n' openrouter > "$config_dir/provider"
+fi
+if [[ ! -s "$config_dir/model" ]]; then
+  printf '%s\n' inception/mercury-2.5 > "$config_dir/model"
 fi
 
 mkdir -p "$bin_dir"
