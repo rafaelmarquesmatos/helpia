@@ -20,6 +20,7 @@ helpia --model                       # mostra o modelo atual
 helpia --model inception/mercury-2.5 # troca o modelo
 helpia --help                        # lista os comandos
 helpia --update                      # atualiza o helpia
+helpia --uninstall                   # desinstala o helpia
 ```
 
 ## Provedores

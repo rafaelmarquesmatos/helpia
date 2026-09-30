@@ -10,6 +10,7 @@ usage() {
   helpia --model <nome>        troca o modelo
   helpia --help                lista os comandos
   helpia --update              atualiza o helpia
+  helpia --uninstall           desinstala o helpia
 EOF
 }
 
@@ -142,6 +143,21 @@ case "${1:-}" in
     else
       git -C "$root" pull --ff-only
     fi
+    exit 0
+    ;;
+  --uninstall)
+    bin="${HOME}/.local/bin/helpia"
+    install_dir="${HOME}/.local/share/helpia"
+    if [[ -e "$bin" || -L "$bin" ]]; then
+      rm -f "$bin"
+    fi
+    if [[ -d "$install_dir" ]]; then
+      rm -rf "$install_dir"
+    fi
+    if [[ -d "$config_dir" ]]; then
+      rm -rf "$config_dir"
+    fi
+    echo "helpia desinstalado"
     exit 0
     ;;
   -*)
