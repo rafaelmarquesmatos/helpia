@@ -135,7 +135,13 @@ case "${1:-}" in
       echo "esta cópia não pode ser atualizada pelo git" >&2
       exit 1
     fi
-    git -C "$root" pull --ff-only
+    install_dir="$(cd "${HOME}/.local/share/helpia" 2>/dev/null && pwd || true)"
+    git -C "$root" fetch origin
+    if [[ -n "$install_dir" && "$root" == "$install_dir" ]]; then
+      git -C "$root" reset --hard origin/main
+    else
+      git -C "$root" pull --ff-only
+    fi
     exit 0
     ;;
   -*)
